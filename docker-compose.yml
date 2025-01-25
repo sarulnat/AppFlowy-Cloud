@@ -40,7 +40,7 @@ services:
       retries: 12
     volumes:
       - ./migrations/before:/docker-entrypoint-initdb.d
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql
 
   redis:
     restart: on-failure
@@ -213,6 +213,17 @@ services:
     environment:
       - AF_BASE_URL=${FQDN}
       - AF_GOTRUE_URL=${API_EXTERNAL_URL}
+
 volumes:
   postgres_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: /mnt/notes/db/postgres_data
+      o: bind
   minio_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: /mnt/notes/files/minio_data
+      o: bind
