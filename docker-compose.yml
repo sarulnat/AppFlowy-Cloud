@@ -17,9 +17,17 @@ services:
     restart: on-failure
     image: minio/minio
     environment:
-      - MINIO_BROWSER_REDIRECT_URL=${FQDN?:err}/minio
-      - MINIO_ROOT_USER=${APPFLOWY_S3_ACCESS_KEY:-minioadmin}
-      - MINIO_ROOT_PASSWORD=${APPFLOWY_S3_SECRET_KEY:-minioadmin}
+      - MINIO_ROOT_USER=${APPFLOWY_S3_ACCESS_KEY}
+      - MINIO_ROOT_PASSWORD=${APPFLOWY_S3_SECRET_KEY}
+      - MINIO_BROWSER_REDIRECT_URL=${MINIO_URL}
+      # OIDC settings
+      - MINIO_IDENTITY_OPENID_CONFIG_URL=${MINIO_OIDC_AUTH_URL}/.well-known/openid-configuration
+      - MINIO_IDENTITY_OPENID_CLIENT_ID=#{MINIO_OIDC_CLIENT_ID}
+      - MINIO_IDENTITY_OPENID_CLIENT_SECRET=${MINIO_OIDC_CLIENT_SECRET}
+      - MINIO_IDENTITY_OPENID_REDIRECT_URI=${MINIO_OIDC_REDIRECT_URI}
+      - MINIO_IDENTITY_OPENID_CLAIM_NAME=groups
+      - MINIO_IDENTITY_OPENID_DISPLAY_NAME=Authelia
+      - MINIO_IDENTITY_OPENID_SCOPES="openid,email,profile,groups"
     command: server /data --console-address ":9001"
     volumes:
       - minio_data:/data
