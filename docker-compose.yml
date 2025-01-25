@@ -1,4 +1,4 @@
-# Essential services for AppFlowy Cloud
+# Essential services for AppFlowy Cloud init
 
 services:
   nginx:
