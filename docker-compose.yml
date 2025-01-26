@@ -216,14 +216,14 @@ services:
       postgres:
         condition: service_healthy
 
-  appflowy_web:
-    restart: on-failure
-    image: appflowyinc/appflowy_web:${APPFLOWY_WEB_VERSION:-latest}
-    depends_on:
-      - appflowy_cloud
-    environment:
-      - AF_BASE_URL=${FQDN}
-      - AF_GOTRUE_URL=${API_EXTERNAL_URL}
+  #appflowy_web:
+  #  restart: on-failure
+  #  image: appflowyinc/appflowy_web:${APPFLOWY_WEB_VERSION:-latest}
+  #  depends_on:
+  #    - appflowy_cloud
+  #  environment:
+  #    - AF_BASE_URL=${FQDN}
+  #    - AF_GOTRUE_URL=${API_EXTERNAL_URL}
 
 volumes:
   postgres_data:
