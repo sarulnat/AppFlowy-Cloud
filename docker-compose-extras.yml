@@ -3,13 +3,6 @@ include:
   - docker-compose.yml
 
 services:
-  tunnel:
-    image: cloudflare/cloudflared
-    restart: unless-stopped
-    command: tunnel --no-autoupdate run
-    environment:
-      - TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN}
-
   portainer:
     restart: on-failure
     image: portainer/portainer-ce:latest
