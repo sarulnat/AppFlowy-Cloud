@@ -35,24 +35,6 @@ services:
     volumes:
       - minio_data:/data
 
-  postgres:
-    restart: on-failure
-    image: pgvector/pgvector:pg16
-    environment:
-      - POSTGRES_USER=${POSTGRES_USER:-postgres}
-      - POSTGRES_DB=${POSTGRES_DB:-postgres}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-password}
-      - POSTGRES_HOST=${POSTGRES_HOST:-postgres}
-      - SUPABASE_PASSWORD=${SUPABASE_PASSWORD:-root}
-    healthcheck:
-      test: [ "CMD", "pg_isready", "-U", "${POSTGRES_USER}" ]
-      interval: 5s
-      timeout: 5s
-      retries: 12
-    volumes:
-      - ./migrations/before:/docker-entrypoint-initdb.d
-      - postgres_data:/var/lib/postgresql
-
   redis:
     restart: on-failure
     image: redis
@@ -62,9 +44,6 @@ services:
     build:
       context: docker/gotrue
       dockerfile: Dockerfile
-    depends_on:
-      postgres:
-        condition: service_healthy
     healthcheck:
       test: "curl --fail http://127.0.0.1:9999/health || exit 1"
       interval: 5s
@@ -184,9 +163,6 @@ services:
       - APPFLOWY_AI_SERVER_PORT=${AI_SERVER_PORT}
       - APPFLOWY_AI_DATABASE_URL=${AI_DATABASE_URL}
       - APPFLOWY_AI_REDIS_URL=${AI_REDIS_URL}
-    depends_on:
-      postgres:
-        condition: service_healthy
 
   appflowy_worker:
     restart: on-failure
@@ -212,26 +188,8 @@ services:
       - APPFLOWY_MAILER_SMTP_USERNAME=${APPFLOWY_MAILER_SMTP_USERNAME}
       - APPFLOWY_MAILER_SMTP_EMAIL=${APPFLOWY_MAILER_SMTP_EMAIL}
       - APPFLOWY_MAILER_SMTP_PASSWORD=${APPFLOWY_MAILER_SMTP_PASSWORD}
-    depends_on:
-      postgres:
-        condition: service_healthy
-
-  #appflowy_web:
-  #  restart: on-failure
-  #  image: appflowyinc/appflowy_web:${APPFLOWY_WEB_VERSION:-latest}
-  #  depends_on:
-  #    - appflowy_cloud
-  #  environment:
-  #    - AF_BASE_URL=${FQDN}
-  #    - AF_GOTRUE_URL=${API_EXTERNAL_URL}
 
 volumes:
-  postgres_data:
-    driver: local
-    driver_opts:
-      type: none
-      device: /mnt/notes/db/postgres_data
-      o: bind
   minio_data:
     driver: local
     driver_opts:
